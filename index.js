@@ -1,25 +1,62 @@
+let nombreUsuario = prompt("Ingrese su nombre");
+
+if (nombreUsuario == ""){
+    alert("No ingresaste su nombre");
+    prompt("Ingrese su nombre");
+}
+
+else{
+    alert("Hola "+ nombreUsuario);
+}
+
 let productos = []
 
 let formulario;
 let inputItem;
-let inputPrecio;
 let inputaCantidad;
+let inputPrecio;
 let tabla;
 
 class Productos{
-    constructor(item, precio, cantidad){
-        this.item = item
-        this.precio = precio;
+    constructor(item, cantidad, precio){
+        this.item = item;
         this.cantidad = cantidad;
+        this.total = precio;
+    }
+
+    precio = () => (this.item*this.cantidad)
+    precioTotal = () => {
+        let valorAmultiplicar = 0
+        switch (this.item){
+            case "Esponja":
+                valorAmultiplicar = 100
+                break;
+            case "Jabon":
+                valorAmultiplicar = 200
+                break;
+            case "Shampoo":
+                valorAmultiplicar = 400
+                break;
+            case "Acondicionador":
+                valorAmultiplicar = 450
+                break;
+            case "Ninguno":
+                valorAmultiplicar = 0
+            default: 
+                valorAmultiplicar = 1
+        }
+        return this.cantidad() * valorAmultiplicar
+    
     }
 
 }
 
+
 function inicializarElementos() {
     formulario = document.getElementById("formulario");
     inputItem = document.getElementById("inputItem");
-    inputPrecio = document.getElementById("inputPrecio");
     inputaCantidad = document.getElementById("inputCantidad");
+    inputPrecio = document.getElementById("inputPrecio")
     tabla = document.getElementById("tablaProductos");
 }
 
@@ -29,27 +66,28 @@ function inicializarEventos() {
 
 function validarformulario(event){
     event.preventDefault();
-    let item = inputItem.value;
-    let precio = parseFloat(inputPrecio.value);
+    let item = (inputItem.value);
     let cantidad = parseInt(inputaCantidad.value);
-    let producto = new Productos(item, precio, cantidad);
+    let precio = parseFloat(inputPrecio.value);
+    let producto = new Productos(item, cantidad, precio);
     productos.push(producto)
 
     formulario.reset();
     limpiarTabla();
-    agregarProductosTable();
+    agregarProductosTabla();
     almacenarProductosLocalStorage();
 
     console.log(productos)
 }
 
-function agregarProductosTable(params) {
+function agregarProductosTabla() {
     productos.forEach((producto) => {
         let filaTabla = document.createElement("tr");
         filaTabla.innerHTML = `
         <td>${producto.item}</td>
-        <td>${producto.precio}</td>
-        <td>${producto.cantidad}</td>;`
+        <td>${producto.cantidad}</td>
+        <td>${producto.precioTotal}</td>
+        ;`
 
         tabla.tBodies[0].append(filaTabla)
     });
@@ -74,8 +112,8 @@ function obtenerProductosLocalStorage() {
 }
 
 function main() {
-    inicializarElementos()
-    inicializarEventos()
+    inicializarElementos();
+    inicializarEventos();
     obtenerProductosLocalStorage();
     agregarProductosTable();
 }
